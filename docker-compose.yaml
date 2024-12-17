@@ -1,0 +1,23 @@
+networks:
+  iternal:
+    name: iternal
+  exposed:
+    name: exposed
+services:
+  postgres:
+    container_name: postgres_esc_notes
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./postgres/home:/home
+      - ./postgres/root:/root
+    ports:
+      - "5432:5432"
+#    Here u can set RAM and CPU limits for the container
+#    deploy:
+#      resources:
+#        limits:
+#          cpus: '1.5'
+#          memory: 7168M #7G
