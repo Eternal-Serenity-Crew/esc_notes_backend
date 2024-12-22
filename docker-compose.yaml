@@ -9,7 +9,7 @@ services:
     image: postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./postgres/home:/home
       - ./postgres/root:/root
