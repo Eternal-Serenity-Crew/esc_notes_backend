@@ -1,13 +1,19 @@
 package com.esc.escnotesbackend.services;
 
-import com.esc.escnotesbackend.dto.UpdateUserDTO;
-import com.esc.escnotesbackend.dto.UserDTO;
+import com.esc.escnotesbackend.dto.token.CreateTokenDTO;
+import com.esc.escnotesbackend.dto.token.ValidateTokenDTO;
+import com.esc.escnotesbackend.dto.user.ChangeUserPasswordDTO;
+import com.esc.escnotesbackend.dto.user.ChangeUserPasswordSecondStepDTO;
+import com.esc.escnotesbackend.dto.user.UpdateUserDTO;
+import com.esc.escnotesbackend.dto.user.UserDTO;
 import com.esc.escnotesbackend.entities.User;
 import com.esc.escnotesbackend.exceptions.DoubleRecordException;
 import com.esc.escnotesbackend.exceptions.ExecutionFailedException;
+import com.esc.escnotesbackend.exceptions.IncorrectTokenException;
 import com.esc.escnotesbackend.exceptions.IncorrectUserDataException;
 import com.esc.escnotesbackend.mapper.UserMapper;
 import com.esc.escnotesbackend.repositories.UserRepository;
+import com.esc.escnotesbackend.utils.EmailCodeGeneratorUtil;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,12 +24,16 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final MailerService mailerService;
+    private final TokenService tokenService;
 
     @Autowired
-    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, TokenService tokenService, MailerService mailerService) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+        this.mailerService = mailerService;
+        this.tokenService = tokenService;
     }
 
     @Transactional
@@ -55,6 +65,27 @@ public class UserService {
 
         updateUserDTO.name().ifPresent(user::setName);
         updateUserDTO.email().ifPresent(user::setEmail);
+    }
+
+
+    public void changePasswordFirstStep(ChangeUserPasswordDTO userData) {
+        String code = EmailCodeGeneratorUtil.getEmailCode();
+        User user = this.findUserByEmail(userData.email());
+
+        this.tokenService.setToken(new CreateTokenDTO(user.getId(), code));
+        this.mailerService.sendMail(userData.email(), "Verification code", code);
+    }
+
+    public void changePasswordSecondStep(ChangeUserPasswordSecondStepDTO userData) {
+        User user = this.findUserByEmail(userData.email());
+        boolean checkValid = this.tokenService.validateToken(new ValidateTokenDTO(user.getId(), userData.code()));
+
+        if (!checkValid) {
+            throw new IncorrectTokenException();
+        }
+
+        user.setPassword(passwordEncoder.encode(userData.password()));
+        this.tokenService.deleteToken(user.getId());
     }
 
     public User findUserByEmail(String email) {

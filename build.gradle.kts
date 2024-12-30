@@ -31,6 +31,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     implementation("io.github.cdimascio:dotenv-java:2.2.0")
 
