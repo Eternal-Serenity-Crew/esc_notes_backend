@@ -1,4 +1,4 @@
-package com.esc.escnotesbackend.dto;
+package com.esc.escnotesbackend.dto.user;
 
 import com.esc.escnotesbackend.config.enums.Roles;
 
