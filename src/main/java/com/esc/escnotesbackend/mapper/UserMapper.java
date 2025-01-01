@@ -1,6 +1,6 @@
 package com.esc.escnotesbackend.mapper;
 
-import com.esc.escnotesbackend.dto.UserDTO;
+import com.esc.escnotesbackend.dto.user.UserDTO;
 import com.esc.escnotesbackend.entities.User;
 import org.mapstruct.Mapper;
 

@@ -1,8 +1,6 @@
 package com.esc.escnotesbackend.controllers;
 
-import com.esc.escnotesbackend.dto.DeleteUserDTO;
-import com.esc.escnotesbackend.dto.UpdateUserDTO;
-import com.esc.escnotesbackend.dto.UserDTO;
+import com.esc.escnotesbackend.dto.user.*;
 import com.esc.escnotesbackend.services.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,5 +40,16 @@ public class UserController {
     @GetMapping("/findByEmail")
     public String findByEmail(@RequestBody String userEmail) {
         return userService.findUserByEmail(userEmail).toString();
+    }
+
+    @PostMapping("/changePassword")
+    public void changePasswordFirstStep(@RequestBody ChangeUserPasswordDTO changeUserPasswordDTO) {
+        this.userService.changePasswordFirstStep(changeUserPasswordDTO);
+    }
+
+    @PostMapping("/verifyNewPassword")
+    @Transactional
+    public void changePasswordSecondStep(@RequestBody ChangeUserPasswordSecondStepDTO changeUserPasswordDTO) {
+        this.userService.changePasswordSecondStep(changeUserPasswordDTO);
     }
 }
