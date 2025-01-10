@@ -7,20 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/public/users")
+@RequestMapping("/users")
 public class UserController {
     private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
-    }
-
-    @PostMapping("/register")
-    @Transactional
-    public String registerUser(@RequestBody UserDTO user) {
-        userService.registerUser(user);
-        return userService.findUserByEmail(user.email()).toString();
     }
 
     @DeleteMapping("/delete")

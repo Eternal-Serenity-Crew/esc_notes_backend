@@ -1,14 +1,33 @@
 package com.esc.escnotesbackend.exceptions;
 
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
 
 @Getter
 public class BasicRuntimeException extends RuntimeException {
     private final String className;
     private final String methodName;
 
+    public BasicRuntimeException(String message, HttpStatus httpStatus) {
+        super(message);
+
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+
+        this.className = stackTraceElements[3].getClassName();
+        this.methodName = stackTraceElements[3].getMethodName();
+    }
+
     public BasicRuntimeException(String message) {
         super(message);
+
+        StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+
+        this.className = stackTraceElements[3].getClassName();
+        this.methodName = stackTraceElements[3].getMethodName();
+    }
+
+    public BasicRuntimeException(String message, Throwable cause, HttpStatus httpStatus) {
+        super(message, cause);
 
         StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
 

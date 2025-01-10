@@ -34,6 +34,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.mapstruct:mapstruct:1.5.3.Final")
     implementation("io.github.cdimascio:dotenv-java:2.2.0")
+    implementation("io.jsonwebtoken:jjwt:0.9.1")
+    implementation("javax.xml.bind:jaxb-api:2.3.0")
 
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
