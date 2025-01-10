@@ -3,7 +3,6 @@ package com.esc.escnotesbackend.controllers;
 import com.esc.escnotesbackend.dto.token.UserJwtTokensDTO;
 import com.esc.escnotesbackend.dto.user.LoginUserDTO;
 import com.esc.escnotesbackend.dto.user.UserDTO;
-import com.esc.escnotesbackend.services.UserService;
 import com.esc.escnotesbackend.strategies.AuthStrategy;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ public class AuthController {
     private final AuthStrategy authStrategy;
 
     @Autowired
-    public AuthController(AuthStrategy authStrategy, UserService userService) {
+    public AuthController(AuthStrategy authStrategy) {
         this.authStrategy = authStrategy;
     }
 
