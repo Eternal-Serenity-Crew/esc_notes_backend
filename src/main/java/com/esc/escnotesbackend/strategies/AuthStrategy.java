@@ -1,6 +1,9 @@
 package com.esc.escnotesbackend.strategies;
 
+import com.esc.escnotesbackend.dto.token.CreateTokenDTO;
 import com.esc.escnotesbackend.dto.token.UserJwtTokensDTO;
+import com.esc.escnotesbackend.dto.token.ValidateSignUpToken;
+import com.esc.escnotesbackend.dto.token.ValidateTokenDTO;
 import com.esc.escnotesbackend.dto.user.LoginUserDTO;
 import com.esc.escnotesbackend.dto.user.UserDTO;
 import com.esc.escnotesbackend.entities.User;
@@ -10,7 +13,10 @@ import com.esc.escnotesbackend.exceptions.InvalidTokenException;
 import com.esc.escnotesbackend.exceptions.LoginFailedException;
 import com.esc.escnotesbackend.mapper.UserMapper;
 import com.esc.escnotesbackend.repositories.UserRepository;
+import com.esc.escnotesbackend.services.MailerService;
+import com.esc.escnotesbackend.services.TokenService;
 import com.esc.escnotesbackend.services.UserService;
+import com.esc.escnotesbackend.utils.EmailCodeGeneratorUtil;
 import com.esc.escnotesbackend.utils.JwtUtil;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
@@ -25,18 +31,24 @@ public class AuthStrategy implements com.esc.escnotesbackend.interfaces.AuthStra
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final TokenService tokenService;
+    private final MailerService mailerService;
 
     @Autowired
     public AuthStrategy(
             UserService userService,
             PasswordEncoder passwordEncoder,
             UserRepository userRepository,
-            UserMapper userMapper
+            UserMapper userMapper,
+            TokenService tokenService,
+            MailerService mailerService
     ) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.tokenService = tokenService;
+        this.mailerService = mailerService;
     }
 
     @Transactional
@@ -109,5 +121,22 @@ public class AuthStrategy implements com.esc.escnotesbackend.interfaces.AuthStra
         ) : new UserJwtTokensDTO(
                 userJwtTokensDTO.authToken(), userJwtTokensDTO.refreshToken()
         );
+    }
+
+    @Override
+    public void generateSighUpCode(String email) {
+        String code = EmailCodeGeneratorUtil.getEmailCode();
+        User user = this.userRepository.findUserByEmail(email);
+
+        this.tokenService.setToken(new CreateTokenDTO(user.getId(), code));
+        this.mailerService.sendMail(email, "Sigh Up Code", code);
+    }
+
+    @Override
+    public boolean validateSighUpCode(ValidateSignUpToken validateSignUpToken) {
+        User user = this.userRepository.findUserByEmail(validateSignUpToken.email());
+        System.out.println(validateSignUpToken.email() + " " + user.getId());
+
+        return this.tokenService.validateToken(new ValidateTokenDTO(user.getId(), validateSignUpToken.token()));
     }
 }
