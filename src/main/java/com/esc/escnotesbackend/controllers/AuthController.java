@@ -1,6 +1,7 @@
 package com.esc.escnotesbackend.controllers;
 
 import com.esc.escnotesbackend.dto.token.UserJwtTokensDTO;
+import com.esc.escnotesbackend.dto.token.ValidateSignUpToken;
 import com.esc.escnotesbackend.dto.user.LoginUserDTO;
 import com.esc.escnotesbackend.dto.user.UserDTO;
 import com.esc.escnotesbackend.strategies.AuthStrategy;
@@ -38,5 +39,15 @@ public class AuthController {
     @GetMapping("/validateTokens")
     public UserJwtTokensDTO validateTokens(@RequestBody UserJwtTokensDTO userJwtTokensDTO) {
         return this.authStrategy.validateUserTokens(userJwtTokensDTO);
+    }
+
+    @GetMapping("/generateSighUpCode")
+    public void generateSighUpCode(@RequestBody String email) {
+        this.authStrategy.generateSighUpCode(email);
+    }
+
+    @GetMapping("/validateSighUpCode")
+    public boolean validateSighUpCode(@RequestBody ValidateSignUpToken validateSignUpToken) {
+        return this.authStrategy.validateSighUpCode(validateSignUpToken);
     }
 }
