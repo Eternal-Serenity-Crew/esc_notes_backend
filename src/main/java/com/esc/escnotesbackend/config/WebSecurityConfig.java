@@ -16,10 +16,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig {
     private final JwtRequestFilter jwtRequestFilter;
+    private final CustomAuthEntryPoint customAuthEntryPoint;
 
     @Autowired
     public WebSecurityConfig(JwtRequestFilter jwtRequestFilter) {
         this.jwtRequestFilter = jwtRequestFilter;
+        this.customAuthEntryPoint = new CustomAuthEntryPoint();
     }
 
     @Bean
@@ -30,6 +32,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(exh -> exh.authenticationEntryPoint(customAuthEntryPoint))
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
