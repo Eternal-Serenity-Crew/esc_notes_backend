@@ -36,13 +36,13 @@ dependencies {
     implementation("io.github.cdimascio:dotenv-java:2.2.0")
     implementation("io.jsonwebtoken:jjwt:0.9.1")
     implementation("javax.xml.bind:jaxb-api:2.3.0")
+    implementation("org.postgresql:postgresql:42.5.0")
 
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.springframework.security:spring-security-test")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("org.springframework.boot:spring-boot-docker-compose")
     compileOnly("org.projectlombok:lombok")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
